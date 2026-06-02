@@ -1,0 +1,7 @@
+Flask
+edge-tts
+pydub
+tensorflow
+librosa
+numpy
+matplotlib
