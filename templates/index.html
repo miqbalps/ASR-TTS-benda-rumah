@@ -1,83 +1,163 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiveSpeech - TTS & ASR PTU 2026</title>
+    <title>ListenSpeech - TTS & ASR PTU 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #FFFFFF;
+            --bg-secondary: #EBF7F2;
             --surface: #FFFFFF;
-            --text: #0F2B46;
-            --muted: rgba(15, 43, 70, 0.7);
-            --accent: #0053A9;
-            --border: rgba(15, 43, 70, 0.18);
-            --panel: rgba(15, 43, 70, 0.04);
-            --input: rgba(15, 43, 70, 0.02);
-        }
-
-        [data-theme="dark"] {
-            --bg: #0F2B46;
-            --surface: #0F2B46;
-            --text: #FFFFFF;
-            --muted: rgba(255, 255, 255, 0.7);
-            --accent: #93C5FD;
-            --border: rgba(255, 255, 255, 0.18);
-            --panel: rgba(0, 83, 169, 0.12);
-            --input: rgba(255, 255, 255, 0.06);
+            --text: #21201C;
+            --muted: rgba(33, 32, 28, 0.65);
+            --accent: #0D3C48;
+            --border: rgba(13, 60, 72, 0.2);
+            --panel: #EBF7F2;
+            --input: #FFFFFF;
+            --danger: #B91C1C;
+            --warning: #B45309;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .text-main { color: var(--text); }
-        .text-muted { color: var(--muted); }
-        .text-accent { color: var(--accent); }
-        .panel { background: var(--panel); border: 1px solid var(--border); }
-        .field { background: var(--input); border: 1px solid var(--border); color: var(--text); }
-        .field option { background: var(--bg); color: var(--text); }
-        .field::placeholder { color: var(--muted); }
-        .field:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 83, 169, 0.2); }
-        .divider { border-color: var(--border); }
-        .link-muted { color: var(--muted); }
-        .link-muted:hover { color: var(--text); }
-        .export-btn { border: 1px solid var(--accent); color: var(--accent); }
-        .export-btn:hover { background: rgba(0, 83, 169, 0.12); }
-        .icon-btn { border: 1px solid var(--accent); color: var(--accent); }
-        .icon-btn:hover { background: rgba(0, 83, 169, 0.12); }
-        .error-box { color: #FCA5A5; background: rgba(127, 29, 29, 0.2); border: 1px solid rgba(248, 113, 113, 0.35); }
+        .text-main {
+            color: var(--text);
+        }
+
+        .text-muted {
+            color: var(--muted);
+        }
+
+        .text-accent {
+            color: var(--accent);
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+        }
+
+        .field {
+            background: var(--input);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .field option {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .field::placeholder {
+            color: var(--muted);
+        }
+
+        .field:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(13, 60, 72, 0.15);
+        }
+
+        .divider {
+            border-color: var(--border);
+        }
+
+        .link-muted {
+            color: var(--muted);
+        }
+
+        .link-muted:hover {
+            color: var(--text);
+        }
+
+        .export-btn {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .export-btn:hover {
+            background: rgba(13, 60, 72, 0.08);
+        }
+
+        .icon-btn {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .icon-btn:hover {
+            background: rgba(13, 60, 72, 0.08);
+        }
+
+        .error-box {
+            color: var(--danger);
+            background: rgba(185, 28, 28, 0.08);
+            border: 1px solid rgba(185, 28, 28, 0.25);
+        }
+
+        .play-btn {
+            background: var(--accent);
+            color: #FFFFFF;
+        }
+
+        .play-btn:hover {
+            background: #0B3440;
+        }
+
+        .play-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .play-btn.is-stop {
+            background: #21201C;
+        }
+
+        .asr-btn {
+            border: 1px solid var(--accent);
+            color: #FFFFFF;
+            background: var(--accent);
+        }
+
+        .asr-btn:hover {
+            background: #0B3440;
+        }
+
+        .asr-btn.is-recording {
+            background: #21201C;
+            border-color: #21201C;
+        }
     </style>
 </head>
-<body class="min-h-screen p-8 flex flex-col items-center">
 
-    <div class="flex items-center space-x-4 mb-12">
+<body class="min-h-screen px-4 py-5 flex flex-col items-center">
+
+    <div class="flex items-center space-x-3 mb-5">
         <div>
-            <img src="/static/images/logo-tts.png" alt="Logo TTS" class="w-14 h-14" style="transform: skewX(-10deg) rotate(-6deg);">
+            <img src="/static/images/logo-tts.png" alt="Logo TTS" class="w-11 h-11"
+                style="transform: skewX(-10deg) rotate(-6deg);">
         </div>
-        <h1 class="text-3xl font-bold tracking-wide text-main">LiveSpeech</h1>
-        <button id="themeToggle" class="ml-8 text-muted hover:text-main transition-colors" title="Ganti tema" aria-label="Ganti tema">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-            </svg>
-        </button>
+        <h1 class="text-2xl font-bold tracking-wide text-main">ListenSpeech</h1>
     </div>
 
-    <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-        
-        <div class="md:col-span-2 flex flex-col">
-            <h2 class="text-lg font-bold uppercase tracking-wider text-accent mb-4">Text to Speech</h2>
-            
-            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6 justify-start">
+    <div class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+
+        <div class="flex flex-col">
+            <h2 class="text-base font-bold uppercase tracking-wider text-accent mb-3">Text to Speech</h2>
+
+            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 mb-4 justify-start">
                 <div class="flex flex-col">
-                    <label class="text-xs mb-2 font-medium text-accent">Gender Suara</label>
+                    <label class="text-xs mb-1 font-medium text-accent">Gender Suara</label>
                     <div class="relative">
-                        <select id="genderSelect" class="field rounded-lg py-2 px-4 text-sm focus:outline-none w-40 appearance-none cursor-pointer">
+                        <select id="genderSelect"
+                            class="field rounded-md py-2 px-4 text-sm focus:outline-none w-40 appearance-none cursor-pointer">
                             <option value="perempuan">Perempuan</option>
                             <option value="laki-laki">Laki-laki</option>
                         </select>
@@ -85,9 +165,10 @@
                 </div>
 
                 <div class="flex flex-col">
-                    <label class="text-xs mb-2 font-medium text-accent">Kecepatan Bicara</label>
+                    <label class="text-xs mb-1 font-medium text-accent">Kecepatan Bicara</label>
                     <div class="relative">
-                        <select id="speedSelect" class="field rounded-lg py-2 px-4 text-sm focus:outline-none w-40 appearance-none cursor-pointer">
+                        <select id="speedSelect"
+                            class="field rounded-md py-2 px-4 text-sm focus:outline-none w-40 appearance-none cursor-pointer">
                             <option value="0.25">0.25x</option>
                             <option value="0.5">0.5x</option>
                             <option value="normal" selected>Normal</option>
@@ -100,9 +181,10 @@
                 </div>
 
                 <div class="flex flex-col">
-                    <label class="text-xs mb-2 font-medium text-accent">Format Unduh</label>
+                    <label class="text-xs mb-1 font-medium text-accent">Format Unduh</label>
                     <div class="relative">
-                        <select id="formatSelect" class="field rounded-lg py-2 px-4 text-sm focus:outline-none w-40 appearance-none cursor-pointer">
+                        <select id="formatSelect"
+                            class="field rounded-md py-2 px-4 text-sm focus:outline-none w-40 appearance-none cursor-pointer">
                             <option value="mp3" selected>MP3</option>
                             <option value="wav">WAV</option>
                         </select>
@@ -110,77 +192,97 @@
                 </div>
             </div>
 
-            <div class="flex items-center space-x-4 mb-4">
-                <button id="speakBtn" class="group flex items-center space-x-2 border border-pink-500/50 text-pink-500 px-6 py-2 rounded-lg hover:bg-pink-500/10 hover:border-pink-500 transition-all">
-                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.31-2.5-4.06v8.12c1.48-.75 2.5-2.29 2.5-4.06zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
+            <div class="flex justify-between text-[11px] text-muted mb-1 px-1 uppercase tracking-wider font-semibold">
+                <span>Input Teks Bahasa Indonesia</span>
+                <span id="charCount">0 / 4500</span>
+            </div>
+
+            <div class="relative">
+                <textarea id="textInput"
+                    class="w-full field rounded-md p-4 pr-16 focus:outline-none resize-none h-48 leading-relaxed transition-colors text-sm"
+                    placeholder="Ketik kalimat atau gunakan fitur Perekam Suara di sebelah kanan..."></textarea>
+                <button id="speakBtn"
+                    class="play-btn absolute bottom-4 right-4 w-11 h-11 rounded-md flex items-center justify-center"
+                    title="Putar" aria-label="Putar">
+                    <svg id="playIcon" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M5 4.5v15a1 1 0 0 0 1.6.8l11-7.5a1 1 0 0 0 0-1.6l-11-7.5a1 1 0 0 0-1.6.8z" />
                     </svg>
-                    <span class="font-semibold text-sm tracking-wide" id="speakLabel">LISTEN</span>
-                    <svg id="loadingIcon" class="animate-spin h-4 w-4 text-pink-400 hidden" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg id="stopIcon" class="h-4 w-4 hidden" fill="currentColor" viewBox="0 0 24 24">
+                        <rect x="6" y="6" width="12" height="12" rx="1.5" />
                     </svg>
                 </button>
             </div>
 
-            <div class="flex justify-between text-[11px] text-muted mb-2 px-1 uppercase tracking-wider font-semibold">
-                <span>Input Teks Bahasa Indonesia</span>
-                <span id="charCount">0 / 4500</span>
-            </div>
-            
-            <textarea id="textInput" class="w-full field rounded-xl p-5 focus:outline-none resize-none h-64 leading-relaxed transition-colors shadow-inner" placeholder="Ketik kalimat atau gunakan fitur Perekam Suara di sebelah kanan..."></textarea>
-            
-            <div class="flex justify-between items-center mt-4 px-1">
-                <button id="clearBtn" class="text-xs text-muted hover:text-main uppercase font-bold tracking-wider transition-colors">Clear</button>
-                <a id="exportBtn" href="#" class="export-btn px-5 py-1.5 rounded-full text-xs font-semibold transition-all uppercase tracking-wider flex items-center space-x-2 pointer-events-none opacity-50">
+            <div class="flex justify-between items-center mt-3 px-1">
+                <button id="clearBtn"
+                    class="text-xs text-muted hover:text-main uppercase font-bold tracking-wider transition-colors">Clear</button>
+                <a id="exportBtn" href="#"
+                    class="export-btn px-5 py-1.5 rounded-full text-xs font-semibold transition-all uppercase tracking-wider flex items-center space-x-2 pointer-events-none opacity-50">
                     <span id="exportLabel">Export (.MP3)</span>
                 </a>
             </div>
 
-            <div id="audioWrap" class="hidden mt-6 panel rounded-xl p-4">
-                <p class="text-xs text-accent mb-3 uppercase tracking-widest font-semibold">Hasil Pengonversian Audio</p>
+            <div id="audioWrap" class="hidden mt-4 panel rounded-md p-3">
+                <p class="text-xs text-accent mb-2 uppercase tracking-widest font-semibold">Hasil Pengonversian Audio
+                </p>
                 <audio id="audioPlayer" controls class="w-full"></audio>
             </div>
         </div>
 
-        <div class="panel rounded-xl p-6 flex flex-col h-full justify-between">
+        <div class="bg-white rounded-md p-5 flex flex-col h-full justify-between border"
+            style="border-color: var(--border);">
             <div>
-                <h2 class="text-lg font-bold uppercase tracking-wider text-accent mb-4">Speech Recognition</h2>
-                <p class="text-xs text-muted mb-6">Ucapkan salah satu kosakata berikut: Blender, Cermin, Dispenser, Jam, Kipas, Kulkas, Kursi, Lemari, Meja, Mikrowave, Oven, Pintu, Sofa, Televisi.</p>
-                
-                <div class="flex flex-col items-center justify-center py-4">
-                    <button id="asrBtn" class="w-20 h-20 rounded-full flex items-center justify-center border-2 border-blue-500 text-blue-500 hover:bg-blue-500/10 transition-all focus:outline-none relative">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10" id="micIcon">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 0 3-3v-6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z" />
+                <h2 class="text-base font-bold uppercase tracking-wider text-accent mb-3">Speech Recognition</h2>
+                <p class="text-xs text-muted mb-4">Kosakata: Blender, Cermin, Dispenser, Jam, Kipas, Kulkas, Kursi,
+                    Lemari, Meja, Mikrowave, Oven, Pintu, Sofa, Televisi.</p>
+
+                <div class="flex flex-col items-center justify-center py-3">
+                    <button id="asrBtn"
+                        class="asr-btn px-5 py-2.5 rounded-md text-sm font-semibold flex items-center space-x-2 transition-all focus:outline-none">
+                        <svg id="micIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 0 3-3v-6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z" />
                         </svg>
-                        <span id="asrPulse" class="absolute inset-0 rounded-full bg-blue-500/30 animate-ping hidden"></span>
+                        <svg id="asrStopIcon" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="6" y="6" width="12" height="12" rx="1.5" />
+                        </svg>
+                        <span id="asrLabel">Rekam</span>
                     </button>
-                    <p id="asrStatus" class="text-xs font-semibold uppercase tracking-wider mt-4 text-muted">Klik untuk mulai merekam</p>
+                    <p id="asrStatus" class="text-xs font-semibold uppercase tracking-wider mt-3 text-muted">Klik untuk
+                        mulai merekam</p>
                 </div>
 
-                <div id="asrResultWrap" class="hidden mt-4 pt-4 border-t divider">
+                <div id="asrResultWrap" class="hidden mt-3 pt-3 border-t divider">
                     <p class="text-xs font-bold text-accent uppercase tracking-wider">Prediksi Benda Terbaca:</p>
-                    <p id="predictedLabel" class="text-3xl font-bold tracking-wide text-main mt-1">-</p>
+                    <p id="predictedLabel" class="text-2xl font-bold tracking-wide text-accent mt-1">-</p>
                     <p id="confidenceScore" class="text-xs text-muted mt-1">Confidence Score: 0.00%</p>
-                    
-                    <div class="mt-4">
+
+                    <div class="mt-3">
                         <p class="text-[10px] uppercase font-bold text-muted tracking-wider mb-1">Top Alternatif:</p>
-                        <ul id="topConfidenceList" class="text-xs text-muted space-y-1"></ul>
+                        <ul id="topConfidenceList" class="text-xs text-muted space-y-0.5"></ul>
                     </div>
 
-                    <div class="mt-6 pt-4 border-t divider">
+                    <div class="mt-4 pt-3 border-t divider">
                         <div class="flex items-center justify-between mb-2">
-                            <p class="text-xs font-bold text-accent uppercase tracking-wider">Visualisasi Gelombang MFCC:</p>
-                            <a id="mfccDownloadBtn" href="#" class="flex items-center justify-center transition-all pointer-events-none opacity-50" title="Unduh MFCC" aria-label="Unduh MFCC">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                    <path d="M12 3a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4.004 4.004a1 1 0 0 1-1.414 0l-4.004-4.004a1 1 0 0 1 1.414-1.414L11 12.586V4a1 1 0 0 1 1-1z"/>
-                                    <path d="M5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"/>
+                            <p class="text-xs font-bold text-accent uppercase tracking-wider">Visualisasi Gelombang
+                                MFCC:</p>
+                            <a id="mfccDownloadBtn" href="#"
+                                class="flex items-center justify-center transition-all pointer-events-none opacity-50"
+                                title="Unduh MFCC" aria-label="Unduh MFCC">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-4 h-4">
+                                    <path
+                                        d="M12 3a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4.004 4.004a1 1 0 0 1-1.414 0l-4.004-4.004a1 1 0 0 1 1.414-1.414L11 12.586V4a1 1 0 0 1 1-1z" />
+                                    <path d="M5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z" />
                                 </svg>
                             </a>
                         </div>
-                        <div class="bg-white p-2 rounded-lg border border-gray-200 dark:border-gray-700">
-                            <img id="mfccImage" src="" alt="Grafik Spektrogram MFCC" class="w-full h-auto hidden">
-                            <div id="mfccSkeleton" class="h-32 w-full bg-gray-200 dark:bg-slate-700 animate-pulse rounded flex items-center justify-center text-xs text-gray-400">
+                        <div class="bg-gray-50 p-1.5 rounded-md border border-gray-200">
+                            <img id="mfccImage" src="" alt="Grafik Spektrogram MFCC"
+                                class="w-full h-auto hidden rounded">
+                            <div id="mfccSkeleton"
+                                class="h-28 w-full bg-gray-200 animate-pulse rounded flex items-center justify-center text-xs text-gray-400">
                                 Memplot data...
                             </div>
                         </div>
@@ -190,9 +292,9 @@
         </div>
     </div>
 
-    <div id="errorMsg" class="hidden text-sm error-box px-3 py-2 rounded-lg mt-6 w-full max-w-6xl"></div>
+    <div id="errorMsg" class="hidden text-sm error-box px-3 py-2 rounded-md mt-4 w-full max-w-7xl"></div>
 
-    <div class="mt-auto pt-10 text-[11px] text-muted flex justify-between w-full max-w-6xl border-t divider mt-12">
+    <div class="mt-auto pt-6 text-[11px] text-muted flex justify-between w-full max-w-7xl border-t divider mt-6">
         <p>Copyright &copy; 2026 <span class="text-main font-semibold">Kelompok 6 PTU</span>. All rights reserved.</p>
         <a href="#" class="link-muted transition-colors underline">Repository GitHub</a>
     </div>
@@ -202,19 +304,20 @@
         const charCount = document.getElementById('charCount');
         const clearBtn = document.getElementById('clearBtn');
         const speakBtn = document.getElementById('speakBtn');
-        const speakLabel = document.getElementById('speakLabel');
-        const loadingIcon = document.getElementById('loadingIcon');
+        const playIcon = document.getElementById('playIcon');
+        const stopIcon = document.getElementById('stopIcon');
         const errorMsg = document.getElementById('errorMsg');
         const audioWrap = document.getElementById('audioWrap');
         const audioPlayer = document.getElementById('audioPlayer');
         const exportBtn = document.getElementById('exportBtn');
         const exportLabel = document.getElementById('exportLabel');
-        const themeToggle = document.getElementById('themeToggle');
         const formatSelect = document.getElementById('formatSelect');
 
         // Selektor Komponen ASR
         const asrBtn = document.getElementById('asrBtn');
-        const asrPulse = document.getElementById('asrPulse');
+        const asrLabel = document.getElementById('asrLabel');
+        const asrStopIcon = document.getElementById('asrStopIcon');
+        const micIcon = document.getElementById('micIcon');
         const asrStatus = document.getElementById('asrStatus');
         const asrResultWrap = document.getElementById('asrResultWrap');
         const predictedLabel = document.getElementById('predictedLabel');
@@ -241,27 +344,50 @@
         };
         const formatLabelMap = { 'mp3': 'Export (.MP3)', 'wav': 'Export (.WAV)' };
 
-        formatSelect.addEventListener('change', () => { exportLabel.textContent = formatLabelMap[formatSelect.value]; });
-        
-        // Perbaikan Mekanisme Sinkronisasi Dark Mode (Tailwind & CSS Root)
-        const getInitialTheme = () => localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        
-        const applyTheme = (theme) => {
-            document.documentElement.setAttribute('data-theme', theme);
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-            localStorage.setItem('theme', theme);
+        // Deskripsi penjelasan untuk setiap kelas prediksi benda rumah tangga
+        const descriptionMap = {
+            'blender': 'Blender adalah alat elektronik dapur yang digunakan untuk menghaluskan, mencampur, atau melumatkan bahan makanan dan minuman seperti buah, sayur, dan es.',
+            'cermin': 'Cermin adalah benda dengan permukaan reflektif yang memantulkan cahaya sehingga menghasilkan bayangan, biasa digunakan untuk berhias atau memeriksa penampilan.',
+            'dispenser': 'Dispenser adalah alat yang digunakan untuk mengeluarkan air minum, baik air panas maupun dingin, secara praktis dari galon air mineral.',
+            'jam': 'Jam adalah alat penunjuk waktu yang menampilkan jam, menit, dan detik, tersedia dalam bentuk jam dinding, jam tangan, atau jam meja.',
+            'kipas': 'Kipas adalah alat yang digunakan untuk menghasilkan aliran udara guna menyejukkan ruangan atau tubuh, tersedia dalam bentuk kipas angin listrik maupun kipas tangan.',
+            'kulkas': 'Kulkas atau lemari es adalah peralatan elektronik rumah tangga yang berfungsi untuk menyimpan dan mengawetkan makanan serta minuman pada suhu rendah.',
+            'kursi': 'Kursi adalah perabot tempat duduk yang biasanya memiliki sandaran dan empat kaki, digunakan untuk duduk saat bekerja, makan, atau beristirahat.',
+            'lemari': 'Lemari adalah perabot rumah tangga berbentuk kotak besar dengan pintu yang digunakan untuk menyimpan pakaian, buku, atau barang-barang lainnya.',
+            'meja': 'Meja adalah perabot dengan permukaan datar yang ditopang oleh kaki, digunakan sebagai alas untuk meletakkan barang, bekerja, atau makan.',
+            'mikrowave': 'Mikrowave atau oven gelombang mikro adalah alat dapur elektronik yang menggunakan radiasi gelombang mikro untuk memanaskan dan memasak makanan dengan cepat.',
+            'oven': 'Oven adalah alat pemanggang tertutup yang menggunakan panas untuk memanggang, membakar, atau memasak makanan seperti roti, kue, dan daging.',
+            'pintu': 'Pintu adalah konstruksi yang dapat dibuka dan ditutup, berfungsi sebagai akses keluar masuk ruangan serta memberikan privasi dan keamanan.',
+            'sofa': 'Sofa adalah tempat duduk empuk berlapis kain atau kulit dengan sandaran dan lengan, dirancang untuk kenyamanan duduk atau bersantai di ruang tamu.',
+            'televisi': 'Televisi adalah perangkat elektronik yang menerima dan menampilkan siaran gambar bergerak dan suara, digunakan sebagai media hiburan dan informasi di rumah.'
         };
-        
-        applyTheme(getInitialTheme());
-        
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
-        });
+
+        formatSelect.addEventListener('change', () => { exportLabel.textContent = formatLabelMap[formatSelect.value]; });
+
+        const setSpeakState = (state) => {
+            if (state === 'processing') {
+                speakBtn.disabled = true;
+                playIcon.classList.remove('hidden');
+                stopIcon.classList.add('hidden');
+                speakBtn.classList.remove('is-stop');
+                return;
+            }
+
+            speakBtn.disabled = false;
+
+            if (state === 'playing') {
+                playIcon.classList.add('hidden');
+                stopIcon.classList.remove('hidden');
+                speakBtn.classList.add('is-stop');
+                return;
+            }
+
+            playIcon.classList.remove('hidden');
+            stopIcon.classList.add('hidden');
+            speakBtn.classList.remove('is-stop');
+        };
+
+        setSpeakState('idle');
 
         textInput.addEventListener('input', () => {
             charCount.textContent = `${textInput.value.length} / 4500`;
@@ -281,7 +407,7 @@
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     mediaRecorder = new MediaRecorder(stream);
-                    
+
                     mediaRecorder.ondataavailable = (e) => {
                         if (e.data.size > 0) audioChunks.push(e.data);
                     };
@@ -294,9 +420,10 @@
                     mediaRecorder.start();
                     isRecording = true;
                     asrStatus.textContent = "Merekam... Klik tombol untuk berhenti";
-                    asrPulse.classList.remove('hidden');
-                    asrBtn.classList.replace('text-blue-500', 'text-red-500');
-                    asrBtn.classList.replace('border-blue-500', 'border-red-500');
+                    asrBtn.classList.add('is-recording');
+                    asrLabel.textContent = 'Stop';
+                    micIcon.classList.add('hidden');
+                    asrStopIcon.classList.remove('hidden');
                 } catch (err) {
                     errorMsg.textContent = "Akses mikrofon ditolak atau tidak didukung pada browser ini.";
                     errorMsg.classList.remove('hidden');
@@ -306,9 +433,10 @@
                 mediaRecorder.stream.getTracks().forEach(track => track.stop());
                 isRecording = false;
                 asrStatus.textContent = "Memproses Fitur Akustik...";
-                asrPulse.classList.add('hidden');
-                asrBtn.classList.replace('text-red-500', 'text-blue-500');
-                asrBtn.classList.replace('border-red-500', 'border-blue-500');
+                asrBtn.classList.remove('is-recording');
+                asrLabel.textContent = 'Rekam';
+                micIcon.classList.remove('hidden');
+                asrStopIcon.classList.add('hidden');
             }
         });
 
@@ -317,7 +445,7 @@
             const formData = new FormData();
             formData.append('audio', blob, 'recorded.wav');
             errorMsg.classList.add('hidden');
-            
+
             mfccImage.classList.add('hidden');
             mfccSkeleton.classList.remove('hidden');
             mfccDownloadBtn.classList.add('pointer-events-none', 'opacity-50');
@@ -338,9 +466,12 @@
                 asrResultWrap.classList.remove('hidden');
                 predictedLabel.textContent = data.predicted_label;
                 confidenceScore.textContent = `Confidence Score: ${data.confidence.toFixed(2)}%`;
-                
-                textInput.value = data.predicted_label;
-                charCount.textContent = `${data.predicted_label.length} / 4500`;
+
+                // Masukkan deskripsi benda ke input, bukan nama kelas
+                const labelKey = data.predicted_label.toLowerCase().trim();
+                const description = descriptionMap[labelKey] || data.predicted_label;
+                textInput.value = description;
+                charCount.textContent = `${description.length} / 4500`;
 
                 topConfidenceList.innerHTML = '';
                 data.top_confidence.forEach(item => {
@@ -362,6 +493,9 @@
                 }
 
                 asrStatus.textContent = "Klik untuk mulai merekam";
+
+                // Auto-play TTS dengan deskripsi benda
+                await synthesizeAndPlay();
             } catch (err) {
                 errorMsg.textContent = err.message;
                 errorMsg.classList.remove('hidden');
@@ -371,7 +505,12 @@
         }
 
         // Pengiriman TTS Kalimat
-        speakBtn.addEventListener('click', async () => {
+        audioPlayer.addEventListener('play', () => setSpeakState('playing'));
+        audioPlayer.addEventListener('pause', () => setSpeakState('idle'));
+        audioPlayer.addEventListener('ended', () => setSpeakState('idle'));
+
+        // Fungsi TTS yang bisa dipanggil dari tombol maupun otomatis setelah ASR
+        async function synthesizeAndPlay() {
             const gender = document.getElementById('genderSelect').value;
             const speed = document.getElementById('speedSelect').value;
             const format = document.getElementById('formatSelect').value;
@@ -379,15 +518,14 @@
 
             errorMsg.classList.add('hidden');
             audioWrap.classList.add('hidden');
-            
+
             if (!text) {
                 errorMsg.textContent = 'Silakan isi kolom teks atau lakukan rekaman kata terlebih dahulu.';
                 errorMsg.classList.remove('hidden');
                 return;
             }
 
-            speakLabel.textContent = 'MEMPROSES';
-            loadingIcon.classList.remove('hidden');
+            setSpeakState('processing');
 
             try {
                 const response = await fetch('/api/synthesize', {
@@ -407,20 +545,35 @@
                 audioPlayer.src = lastAudioUrl;
                 audioPlayer.playbackRate = speedMap[speed] || 1.0;
                 audioWrap.classList.remove('hidden');
-                
+
                 exportBtn.href = lastAudioUrl;
                 exportBtn.download = `tts-output.${format}`;
                 exportBtn.classList.remove('pointer-events-none', 'opacity-50');
-                
+
                 audioPlayer.play();
             } catch (error) {
                 errorMsg.textContent = error.message;
                 errorMsg.classList.remove('hidden');
+                setSpeakState('idle');
             } finally {
-                speakLabel.textContent = 'LISTEN';
-                loadingIcon.classList.add('hidden');
+                if (!audioPlayer.paused && !audioPlayer.ended) {
+                    setSpeakState('playing');
+                } else {
+                    setSpeakState('idle');
+                }
             }
+        }
+
+        speakBtn.addEventListener('click', async () => {
+            if (!audioPlayer.paused && !audioPlayer.ended) {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+                setSpeakState('idle');
+                return;
+            }
+            await synthesizeAndPlay();
         });
     </script>
 </body>
+
 </html>
