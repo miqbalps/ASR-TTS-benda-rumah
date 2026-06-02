@@ -89,22 +89,63 @@ async def generate_audio(text, voice, output_path, output_format, supports_outpu
         communicate = edge_tts.Communicate(text, voice)
     await communicate.save(output_path)
 
+def find_ffmpeg():
+    """Cari path ffmpeg: cek bin/ lokal (dengan/tanpa .exe), lalu system PATH.
+    Validasi bahwa binary benar-benar bisa dijalankan di OS ini."""
+    candidates = []
+    for name in ('ffmpeg.exe', 'ffmpeg'):
+        path = os.path.join(app.root_path, 'bin', name)
+        if os.path.isfile(path):
+            candidates.append(path)
+    system_ffmpeg = shutil.which('ffmpeg')
+    if system_ffmpeg:
+        candidates.append(system_ffmpeg)
+
+    for path in candidates:
+        try:
+            subprocess.run(
+                [path, '-version'],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                check=True
+            )
+            return path
+        except (subprocess.CalledProcessError, OSError):
+            continue
+    return None
+
+FFMPEG_PATH = find_ffmpeg()
+
+# Konfigurasi pydub agar pakai ffmpeg/ffprobe yang ditemukan
+if FFMPEG_PATH and AudioSegment is not None:
+    AudioSegment.converter = FFMPEG_PATH
+    ffprobe_dir = os.path.dirname(FFMPEG_PATH)
+    for name in ('ffprobe.exe', 'ffprobe'):
+        fp = os.path.join(ffprobe_dir, name)
+        if os.path.isfile(fp):
+            AudioSegment.ffprobe = fp
+            break
+
+if FFMPEG_PATH:
+    print(f"-> [INFO] FFmpeg ditemukan: {FFMPEG_PATH}")
+else:
+    print("-> [PERINGATAN] FFmpeg tidak ditemukan! Konversi audio mungkin gagal.")
+
 def convert_audio_format(source_path, target_path, out_fmt='wav'):
     if AudioSegment is not None:
-        audio = AudioSegment.from_file(source_path)
-        audio.export(target_path, format=out_fmt)
-        return
+        try:
+            audio = AudioSegment.from_file(source_path)
+            audio.export(target_path, format=out_fmt)
+            return
+        except Exception:
+            pass
 
-    local_ffmpeg = os.path.join(app.root_path, 'bin', 'ffmpeg.exe')
-    ffmpeg_path = local_ffmpeg if os.path.exists(local_ffmpeg) else shutil.which('ffmpeg')
-
-    if ffmpeg_path:
+    if FFMPEG_PATH:
         subprocess.run(
-            [ffmpeg_path, '-y', '-i', source_path, target_path],
+            [FFMPEG_PATH, '-y', '-i', source_path, target_path],
             check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
         return
-    raise RuntimeError('Fitur konversi audio membutuhkan pydub+ffmpeg atau ffmpeg terinstal pada sistem.')
+    raise RuntimeError('Fitur konversi audio membutuhkan ffmpeg. Install ffmpeg atau letakkan di folder bin/.')
 
 # FLASK ROUTES
 @app.route('/')
