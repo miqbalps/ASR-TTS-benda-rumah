@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Aplikasi Text-to-Speech & Automatic Speech Recognition Bahasa Indonesia</strong><br>
-  Proyek Tugas Akhir Kelompok 6 — Pengantar Teknologi Utama (PTU) 2026
+  Proyek Tugas Akhir Kelompok 6 — Pengenalan Ucapan dan Teks ke Ucapan (PTU) 2026
 </p>
 
 <p align="center">
